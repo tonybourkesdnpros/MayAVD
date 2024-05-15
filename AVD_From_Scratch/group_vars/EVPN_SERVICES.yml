@@ -2,6 +2,7 @@
 tenants:
   - name: ACME
     mac_vrf_vni_base: 10000
+    redistribute_mlag_ibgp_peering_vrfs: false
     vrfs:
       - name: VRF_A
         vrf_vni: 10
@@ -14,3 +15,12 @@ tenants:
             name: Internal
             enabled: true
             ip_address_virtual: 10.1.20.1/24
+        l3_interfaces:
+          - interfaces: [Ethernet9]
+            ip_addresses: [10.1.5.2/31]
+            nodes: [leaf3]
+            enabled: True
+        bgp_peers:
+          - ip_address: 10.1.5.3
+            remote_as: 1
+            nodes: [leaf3]

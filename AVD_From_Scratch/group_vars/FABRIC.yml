@@ -1,0 +1,67 @@
+---
+fabric_name: FABRIC
+
+
+spine:
+  defaults:
+    bgp_as: 65100
+    loopback_ipv4_pool: 192.168.101.0/24
+  nodes:
+    - name: spine1
+      id: 11
+      mgmt_ip: 192.168.0.11/24
+    - name: spine2
+      id: 12
+      mgmt_ip: 192.168.0.12/24
+    - name: spine3
+      id: 13
+      mgmt_ip: 192.168.0.13/24
+    - name: spine4
+      id: 14
+      mgmt_ip: 192.168.0.14/24      
+
+l3leaf:
+  defaults:
+    bgp_as: 65101-65180
+    loopback_ipv4_pool: 192.168.101.0/24
+    vtep_loopback_ipv4_pool: 192.168.102.0/24
+    uplink_interfaces: [Ethernet3, Ethernet4, Ethernet5, Ethernet6]
+    uplink_switches: [spine1, spine2, spine3, spine4]
+    uplink_ipv4_pool: 192.168.103.0/24
+    mlag_interfaces: [Ethernet1, Ethernet2]
+    mlag_peer_ipv4_pool: 192.168.104.0/24
+    mlag_peer_l3_ipv4_pool: 192.168.105.0/24
+    virtual_router_mac_address: 00:1c:73:00:00:99
+    mlag: true
+  node_groups:
+    - group: mlag1
+      nodes:
+        - name: leaf1
+          id: 1
+          mgmt_ip: 192.168.0.21/24
+          uplink_switch_interfaces: [Ethernet3, Ethernet3, Ethernet3, Ethernet3]
+        - name: leaf2
+          id: 2
+          mgmt_ip: 192.168.0.22/24
+          uplink_switch_interfaces: [Ethernet4, Ethernet4, Ethernet4, Ethernet4]
+    - group: mlag2
+      bgp_as: 65199
+      nodes:
+        - name: leaf3
+          id: 3
+          mgmt_ip: 192.168.0.23/24
+          uplink_switch_interfaces: [Ethernet5, Ethernet5, Ethernet5, Ethernet5]
+        - name: leaf4
+          id: 4
+          mgmt_ip: 192.168.0.24/24
+          uplink_switch_interfaces: [Ethernet6, Ethernet6, Ethernet6, Ethernet6 ]
+
+p2p_uplinks_mtu: 1550
+
+bgp_update_wait_install: false
+bgp_update_wait_for_convergence: false
+
+dns_domain: atd.lab
+mgmt_interface: Management0
+mgmt_interface_vrf: MGMT
+mgmt_gateway: 192.168.0.1

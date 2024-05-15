@@ -98,24 +98,6 @@ router_bgp:
     neighbors:
     - ip_address: 192.168.105.0
       peer_group: MLAG-IPv4-UNDERLAY-PEER
-  - name: VRF_B
-    router_id: 192.168.101.2
-    rd: 192.168.101.2:30
-    route_targets:
-      import:
-      - address_family: evpn
-        route_targets:
-        - '30:30'
-      export:
-      - address_family: evpn
-        route_targets:
-        - '30:30'
-    redistribute_routes:
-    - source_protocol: connected
-      route_map: RM-CONN-2-BGP-VRFS
-    neighbors:
-    - ip_address: 192.168.105.0
-      peer_group: MLAG-IPv4-UNDERLAY-PEER
   vlans:
   - id: 10
     tenant: ACME
@@ -131,14 +113,6 @@ router_bgp:
     route_targets:
       both:
       - 10020:10020
-    redistribute_routes:
-    - learned
-  - id: 30
-    tenant: Yoyodine
-    rd: 192.168.101.2:20030
-    route_targets:
-      both:
-      - 20030:20030
     redistribute_routes:
     - learned
 static_routes:
@@ -157,9 +131,6 @@ vrfs:
   ip_routing: false
 - name: VRF_A
   tenant: ACME
-  ip_routing: true
-- name: VRF_B
-  tenant: Yoyodine
   ip_routing: true
 management_interfaces:
 - name: Management0
@@ -197,14 +168,6 @@ vlans:
   trunk_groups:
   - LEAF_PEER_L3
   tenant: ACME
-- id: 30
-  name: DMZ
-  tenant: Yoyodine
-- id: 3029
-  name: MLAG_iBGP_VRF_B
-  trunk_groups:
-  - LEAF_PEER_L3
-  tenant: Yoyodine
 vlan_interfaces:
 - name: Vlan4093
   description: MLAG_PEER_L3_PEERING
@@ -237,20 +200,6 @@ vlan_interfaces:
   vrf: VRF_A
   mtu: 1550
   ip_address: 192.168.105.1/31
-- name: Vlan30
-  tenant: Yoyodine
-  description: DMZ
-  shutdown: false
-  ip_address_virtual: 10.1.30.1/24
-  vrf: VRF_B
-- name: Vlan3029
-  tenant: Yoyodine
-  type: underlay_peering
-  shutdown: false
-  description: 'MLAG_PEER_L3_iBGP: vrf VRF_B'
-  vrf: VRF_B
-  mtu: 1550
-  ip_address: 192.168.105.1/31
 port_channel_interfaces:
 - name: Port-Channel1
   description: MLAG_PEER_leaf1_Po1
@@ -268,14 +217,6 @@ port_channel_interfaces:
   vlans: '10'
   spanning_tree_portfast: edge
   mlag: 7
-- name: Port-Channel9
-  description: host2_To host1
-  type: switched
-  shutdown: false
-  mode: access
-  vlans: '30'
-  spanning_tree_portfast: edge
-  mlag: 9
 ethernet_interfaces:
 - name: Ethernet1
   peer: leaf1
@@ -342,15 +283,12 @@ ethernet_interfaces:
   channel_group:
     id: 7
     mode: active
-- name: Ethernet9
-  peer: host2
-  peer_type: server
-  description: host2
+- name: Ethernet8
+  peer: ESXi mgmt
+  description: Example config
+  type: routed
   shutdown: false
-  type: port-channel-member
-  channel_group:
-    id: 9
-    mode: active
+  ip_address: 1.2.3.4/24
 mlag_configuration:
   domain_id: mlag1
   local_interface: Vlan4094
@@ -420,10 +358,6 @@ vxlan_interface:
         vni: 10010
       - id: 20
         vni: 10020
-      - id: 30
-        vni: 20030
       vrfs:
       - name: VRF_A
         vni: 10
-      - name: VRF_B
-        vni: 30

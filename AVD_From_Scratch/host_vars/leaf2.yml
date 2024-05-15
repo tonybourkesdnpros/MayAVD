@@ -1,0 +1,7 @@
+custom_ethernet_interfaces:
+- name: Ethernet8
+  peer: ESXi mgmt
+  description: Example config
+  type: routed
+  shutdown: false
+  ip_address: 1.2.3.4/24

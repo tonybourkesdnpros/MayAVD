@@ -1,0 +1,48 @@
+
+spine:
+  defaults:
+    bgp_as: 65100
+    loopback_ipv4_pool: 192.168.101.0/24
+  nodes:
+    - name: spine1
+      id: 11
+      mgmt_ip: 192.168.0.11/24
+      evpn_route_servers: [spine3, spine4]
+
+    - name: spine2
+      id: 12
+      mgmt_ip: 192.168.0.12/24
+      evpn_route_servers: [spine3, spine4]
+
+
+
+l3leaf:
+  defaults:
+    bgp_as: 65101-65180
+    loopback_ipv4_pool: 192.168.101.0/24
+    vtep_loopback_ipv4_pool: 192.168.102.0/24
+    uplink_interfaces: [Ethernet3, Ethernet4]
+    uplink_switches: [spine1, spine2]
+    uplink_ipv4_pool: 192.168.103.0/24
+    mlag_interfaces: [Ethernet1, Ethernet2]
+    mlag_peer_ipv4_pool: 192.168.104.0/24
+    mlag_peer_l3_ipv4_pool: 192.168.105.0/24
+    virtual_router_mac_address: 00:1c:73:00:00:99
+    mlag: true
+  node_groups:
+    - group: mlag1
+      nodes:
+        - name: leaf1
+          id: 1
+          mgmt_ip: 192.168.0.21/24
+          uplink_switch_interfaces: [Ethernet3, Ethernet3]
+        - name: leaf2
+          id: 2
+          mgmt_ip: 192.168.0.22/24
+          uplink_switch_interfaces: [Ethernet4, Ethernet4]
+  nodes:
+    - name: borderleaf1
+      bgp_as: 65190
+      id: 51
+      uplink_switch_interfaces: [Ethernet7, Ethernet7]
+      mgmt_ip: 192.168.0.25/24

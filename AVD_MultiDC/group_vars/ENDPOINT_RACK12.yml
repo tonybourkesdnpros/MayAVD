@@ -1,0 +1,12 @@
+---
+servers:
+  - name: host1
+    adapters: 
+      - switch_ports: [Ethernet7, Ethernet7]
+        switches: [leaf1, leaf2]
+        vlans: 10
+        mode: access
+        spanning_tree_portfast: edge
+        port_channel:
+          description: To host1
+          mode: active

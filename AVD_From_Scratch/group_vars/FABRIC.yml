@@ -1,5 +1,6 @@
 ---
 fabric_name: FABRIC
+custom_structured_configuration_prefix: ['custom_']
 
 
 spine:
